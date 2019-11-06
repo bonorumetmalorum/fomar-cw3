@@ -1,6 +1,8 @@
 #include <iostream>
 #include <math.h>
 #include <fstream>
+#include <istream>
+#include <vector>
 
 using namespace std;
 
@@ -144,17 +146,80 @@ void fullcolour(ofstream & image, float xmax, float ymax){
 
 }
 
+void readPPM(ifstream & in){
+    string p3;
+    string comment;
+    int x, y, max;
+    getline(in, p3);
+    // if(p3 != "P3"){
+    //     cout << "incorrect file format" << endl;
+    //     return;
+    // }
+    in.ignore(100, '\n');
+    in >> x; in >> y; in >> max;
+    cout << x << y <<max << endl;
+    int pixels[x][y*3];
+    for(int i = 0; i < x; i++){
+        for(int j = 0; j < y*3; j++){
+            in >> pixels[i][j];
+        }
+    }
+
+    ofstream image("texturetest.ppm");
+
+    image << "P3" << endl;
+    image << "#" << endl;
+    image << "128 128" << endl;
+    image << "255" << endl;
+
+    int xmax = 128;int ymax = 128;
+
+    cout << xmax << ymax << endl;
+
+    for(int xstep = 0; xstep < xmax; xstep++){
+        for(int ystep = 0; ystep < ymax; ystep++){
+            cout << "hello" << endl;
+            float alpha = distance(xstep, ystep, 100, 100, 25, 90) / distance(61, 10, 100, 100, 25, 90); //distance from xstep,ystep to CB
+            float beta = distance(xstep, ystep, 61, 10, 25, 90) / distance(100, 100, 61, 10, 25, 90); //distance from xstep,ystep to AC
+            float gamma = distance(xstep, ystep, 100, 100, 61, 10) / distance(25, 90, 100, 100, 61, 10); //distance from xstep,ystep to BA
+            if(alpha < 0.0 || beta < 0.0 || gamma < 0.0){
+                image << 0 << " " << 0 << " " << 0 << " ";
+                cout << "not inside triangle" << endl; 
+                continue;
+            }
+            cout << alpha << " " << beta << " " << gamma << endl;
+
+            float b1 = (0.160268 * alpha) + (0.083611 * beta) + (0.230169 * gamma);
+            float b2 = (0.290086 * alpha) + (0.159907 * beta) + (0.222781 * gamma);
+
+            int texelx = x * b1;
+            int texely = y * b2;
+
+            int R = pixels[texelx][texely*3];
+            int G = pixels[texelx][texely*3+1];
+            int B = pixels[texelx][texely*3+2];
+
+            image << R << " " << G << " " << B << " " ;
+        }
+        image << endl;
+    }
+
+}
+
 int main(int argc, char ** argv){
     if(argc < 4){
         cout << "please provide output file name, xmax and ymax" << endl;
         return -1;
     }
-    ofstream image(argv[1]);
-    image << "P3" << endl;
-    image << "#" << endl;
-    image << argv[2] << " " << argv[3] << endl;
-    image << "255" << endl;
-    fullcolour(image, stoi(argv[2]), stoi(argv[3]));
-    image.close();
+    // ofstream image(argv[1]);
+    // image << "P3" << endl;
+    // image << "#" << endl;
+    // image << argv[2] << " " << argv[3] << endl;
+    // image << "255" << endl;
+    // fullcolour(image, stoi(argv[2]), stoi(argv[3]));
+    ifstream in(argv[1]);
+    readPPM(in);
+    //image.close();
+    in.close();
     return 0;
 }
