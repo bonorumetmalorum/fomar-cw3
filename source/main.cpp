@@ -185,7 +185,7 @@ void readPPM(ifstream & in){
                 image << 0 << " " << 0 << " " << 0 << " ";
                 continue;
             }
-            cout << alpha << " " << beta << " " << gamma << endl;
+            //cout << alpha << " " << beta << " " << gamma << endl;
 
             float b1 = (0.160268 * alpha) + (0.083611 * beta) + (0.230169 * gamma);
             float b2 = (0.290086 * alpha) + (0.159907 * beta) + (0.222781 * gamma);
@@ -199,40 +199,78 @@ void readPPM(ifstream & in){
             float sParm = s - i;
             float tParm = t - j;
 
+            int R0, G0, B0, R1, G1, B1, R2, G2, B2, R3, G3, B3;
+
             //ij
-            int R0 = pixels[i][j*3];
-            int G0 = pixels[i][j*3+1];
-            int B0 = pixels[i][j*3+2];
-            //ij+1
-            int R1 = pixels[i][(j+1)*3];
-            int G1 = pixels[i][(j+1)*3+1];
-            int B1 = pixels[i][(j+1)*3+2];
-            //i+1j
-            int R2 = pixels[i+1][j*3];
-            int G2 = pixels[i+1][j*3+1];
-            int B2 = pixels[i+1][j*3+2];
-            //i+1j+1
-            int R3 = pixels[i+1][(j+1)*3];
-            int G3 = pixels[i+1][(j+1)*3+1];
-            int B3 = pixels[i+1][(j+1)*3+2];
+            R0 = pixels[i][j*3];
+            G0 = pixels[i][j*3+1];
+            B0 = pixels[i][j*3+2];
+            //special cases
+            if(i == y-1 && j == x-1){
+                //ij+1
+                R1 = pixels[i][(j)*3];
+                G1 = pixels[i][(j)*3+1];
+                B1 = pixels[i][(j)*3+2];
+                //i+1j
+                R2 = pixels[i][j*3];
+                G2 = pixels[i][j*3+1];
+                B2 = pixels[i][j*3+2];
+                //i+1j+1
+                R3 = pixels[i][(j)*3];
+                G3 = pixels[i][(j)*3+1];
+                B3 = pixels[i][(j)*3+2];
 
-            //colours on edges
-            int cR0, cG0, cB0, cR1, cG1, cB1;
-            cR0 = R0 + (tParm * (R1 - R0));
-            cG0 = G0 + (tParm * (G1 - G0));
-            cB0 = B0 + (tParm * (B1 - B0));
+            }
+            else if(i == y-1){
+                R1 = pixels[i][(j+1)*3];
+                G1 = pixels[i][(j+1)*3+1];
+                B1 = pixels[i][(j+1)*3+2];
+                //i+1j
+                R2 = pixels[i][j*3];
+                G2 = pixels[i][j*3+1];
+                B2 = pixels[i][j*3+2];
+                //i+1j+1
+                R3 = pixels[i][(j+1)*3];
+                G3 = pixels[i][(j+1)*3+1];
+                B3 = pixels[i][(j+1)*3+2];
+            }
+            else if(j == x-1){
+                //ij+1
+                R1 = pixels[i][(j)*3];
+                G1 = pixels[i][(j)*3+1];
+                B1 = pixels[i][(j)*3+2];
+                //i+1j
+                R2 = pixels[i+1][j*3];
+                G2 = pixels[i+1][j*3+1];
+                B2 = pixels[i+1][j*3+2];
+                //i+1j+1
+                R3 = pixels[i+1][(j)*3];
+                G3 = pixels[i+1][(j)*3+1];
+                B3 = pixels[i+1][(j)*3+2];
+            }
+            else{
+                //ij+1
+                R1 = pixels[i][(j+1)*3];
+                G1 = pixels[i][(j+1)*3+1];
+                B1 = pixels[i][(j+1)*3+2];
+                //i+1j
+                R2 = pixels[i+1][j*3];
+                G2 = pixels[i+1][j*3+1];
+                B2 = pixels[i+1][j*3+2];
+                //i+1j+1
+                R3 = pixels[i+1][(j+1)*3];
+                G3 = pixels[i+1][(j+1)*3+1];
+                B3 = pixels[i+1][(j+1)*3+2];
+            }
 
-            cR1 = R2 + (tParm * (R3 - R2));
-            cG1 = R2 + (tParm * (G3 - G2));
-            cB1 = R2 + (tParm * (B3 - B2));
 
-            //calculate interpolated texel
-            int colourR, colourG, colourB;
-            colourR = cR1 + (sParm * (cR1 - cR0));
-            colourG = cG1 + (sParm * (cG1 - cG0));
-            colourB = cB1 + (sParm * (cB1 - cB0));
-            
-            image << colourR << " " << colourG << " " << colourB << " " ;
+            int R, G, B;
+
+            R = R0*(1-sParm)*(1-tParm) + R1 * (sParm) * (1-tParm) + R2*(1-sParm)*(tParm) + R3*sParm*tParm;
+            G = G0*(1-sParm)*(1-tParm) + G1 * (sParm) * (1-tParm) + G2*(1-sParm)*(tParm) + G3*sParm*tParm;
+            B = B0*(1-sParm)*(1-tParm) + B1 * (sParm) * (1-tParm) + B2*(1-sParm)*(tParm) + B3*sParm*tParm;
+
+            image << R << " " << G << " " << B << " " ;
         }
         image << endl;
     }
