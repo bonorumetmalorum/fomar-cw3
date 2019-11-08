@@ -157,7 +157,7 @@ void readPPM(ifstream & in){
     // }
     in.ignore(100, '\n');
     in >> x; in >> y; in >> max;
-    cout << x << y <<max << endl;
+    //cout << x << y <<max << endl;
     int pixels[x][y*3];
     for(int i = 0; i < x; i++){
         for(int j = 0; j < y*3; j++){
@@ -178,13 +178,11 @@ void readPPM(ifstream & in){
 
     for(int xstep = 0; xstep < xmax; xstep++){
         for(int ystep = 0; ystep < ymax; ystep++){
-            cout << "hello" << endl;
             float alpha = distance(xstep, ystep, 100, 100, 25, 90) / distance(61, 10, 100, 100, 25, 90); //distance from xstep,ystep to CB
             float beta = distance(xstep, ystep, 61, 10, 25, 90) / distance(100, 100, 61, 10, 25, 90); //distance from xstep,ystep to AC
             float gamma = distance(xstep, ystep, 100, 100, 61, 10) / distance(25, 90, 100, 100, 61, 10); //distance from xstep,ystep to BA
             if(alpha < 0.0 || beta < 0.0 || gamma < 0.0){
                 image << 0 << " " << 0 << " " << 0 << " ";
-                cout << "not inside triangle" << endl; 
                 continue;
             }
             cout << alpha << " " << beta << " " << gamma << endl;
@@ -196,7 +194,7 @@ void readPPM(ifstream & in){
             float t = y * b2;
 
             int i = s;
-            int j = s;
+            int j = t;
 
             float sParm = s - i;
             float tParm = t - j;
@@ -220,19 +218,19 @@ void readPPM(ifstream & in){
 
             //colours on edges
             int cR0, cG0, cB0, cR1, cG1, cB1;
-            cR0 = R0 + tParm * (R1 - R0);
-            cG0 = G0 + tParm * (G1 - G0);
-            cB0 = B0 + tParm * (B1 - B0);
+            cR0 = R0 + (tParm * (R1 - R0));
+            cG0 = G0 + (tParm * (G1 - G0));
+            cB0 = B0 + (tParm * (B1 - B0));
 
-            cR1 = R2 + tParm * (R3 - R2);
-            cG1 = R2 + tParm * (G3 - G2);
-            cB1 = R2 + tParm * (B3 - B2);
+            cR1 = R2 + (tParm * (R3 - R2));
+            cG1 = R2 + (tParm * (G3 - G2));
+            cB1 = R2 + (tParm * (B3 - B2));
 
             //calculate interpolated texel
             int colourR, colourG, colourB;
-            colourR = cR1 + sParm * (cR1 - cR0);
-            colourG = cG1 + sParm * (cG1 - cG0);
-            colourB = cB1 + sParm * (cB1 - cB0);
+            colourR = cR1 + (sParm * (cR1 - cR0));
+            colourG = cG1 + (sParm * (cG1 - cG0));
+            colourB = cB1 + (sParm * (cB1 - cB0));
             
             image << colourR << " " << colourG << " " << colourB << " " ;
         }
