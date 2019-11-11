@@ -30,16 +30,16 @@ float distance(float pointx, float pointy, float edgepoint1x, float edgepoint1y,
 //C = 25, 90
 
 void baryinterp(ofstream & image, float xmax, float ymax){
-    for(int xstep = 0; xstep < xmax; xstep++){
-        for(int ystep = 0; ystep < ymax; ystep++){
+    for(int ystep = ymax; ystep > 0; ystep--){
+        for(int xstep = 0; xstep < xmax; xstep++){
             float alpha = distance(xstep, ystep, 100, 100, 25, 90) / distance(61, 10, 100, 100, 25, 90); //distance from xstep,ystep to CB
             float beta = distance(xstep, ystep, 61, 10, 25, 90) / distance(100, 100, 61, 10, 25, 90); //distance from xstep,ystep to AC
             float gamma = distance(xstep, ystep, 100, 100, 61, 10) / distance(25, 90, 100, 100, 61, 10); //distance from xstep,ystep to BA
+            cout << alpha << " " << beta << " " << gamma << endl;
             if(alpha < 0.0 || beta < 0.0 || gamma < 0.0){
-                image << 255 << " " << 255 << " " << 192 << endl;
+                image << 255 << " " << 255 << " " << 192 << " ";
                 continue;
             }
-            cout << alpha << " " << beta << " " << gamma << endl;
             int R = (100 + (100 * alpha));
             int G = 100 + (100 * beta);
             int B = 100 + (100 * gamma);
@@ -47,15 +47,16 @@ void baryinterp(ofstream & image, float xmax, float ymax){
             G = (G < 0)? 0 : (G > 255)? 255 : G;
             B = (B < 0)? 0 : (B > 255)? 255 : B;
 
-            image << R << " " << G << " " << B << endl;
+            image << R << " " << G << " " << B << " ";
         }
+        image << endl;
     }
 
 }
 
 void halfplanetest(ofstream & image, float xmax, float ymax){
-    for(int xstep = 0; xstep < xmax; xstep++){
-        for(int ystep = 0; ystep < ymax; ystep++){
+    for(int ystep = ymax; ystep > 0; ystep--){
+        for(int xstep = 0; xstep < xmax; xstep++){
             float alpha = distance(xstep, ystep, 100, 100, 25, 90) / distance(61, 10, 100, 100, 25, 90); //distance from xstep,ystep to CB
             float beta = distance(xstep, ystep, 61, 10, 25, 90) / distance(100, 100, 61, 10, 25, 90); //distance from xstep,ystep to AC
             float gamma = distance(xstep, ystep, 100, 100, 61, 10) / distance(25, 90, 100, 100, 61, 10); //distance from xstep,ystep to BA
@@ -87,8 +88,8 @@ void halfplanetest(ofstream & image, float xmax, float ymax){
 
 
 void blacktriangle(ofstream & image, float xmax, float ymax){
-    for(int xstep = 0; xstep < xmax; xstep++){
-        for(int ystep = 0; ystep < ymax; ystep++){
+    for(int ystep = ymax; ymax > 0; ystep--){
+        for(int xstep = 0; xstep < xmax; xstep++){
             float alpha = distance(xstep, ystep, 100, 100, 25, 90) / distance(61, 10, 100, 100, 25, 90); //distance from xstep,ystep to CB
             float beta = distance(xstep, ystep, 61, 10, 25, 90) / distance(100, 100, 61, 10, 25, 90); //distance from xstep,ystep to AC
             float gamma = distance(xstep, ystep, 100, 100, 61, 10) / distance(25, 90, 100, 100, 61, 10); //distance from xstep,ystep to BA
@@ -119,8 +120,8 @@ void blacktriangle(ofstream & image, float xmax, float ymax){
 }
 
 void fullcolour(ofstream & image, float xmax, float ymax){
-    for(int xstep = 0; xstep < xmax; xstep++){
-        for(int ystep = 0; ystep < ymax; ystep++){
+    for(int ystep = ymax; ystep > 0; ystep--){
+        for(int xstep = 0; xstep < ymax; xstep++){
             float alpha = distance(xstep, ystep, 100, 100, 25, 90) / distance(61, 10, 100, 100, 25, 90); //distance from xstep,ystep to CB
             float beta = distance(xstep, ystep, 61, 10, 25, 90) / distance(100, 100, 61, 10, 25, 90); //distance from xstep,ystep to AC
             float gamma = distance(xstep, ystep, 100, 100, 61, 10) / distance(25, 90, 100, 100, 61, 10); //distance from xstep,ystep to BA
@@ -149,18 +150,18 @@ void fullcolour(ofstream & image, float xmax, float ymax){
 void readPPM(ifstream & in){
     string p3;
     string comment;
-    int x, y, max;
+    int h, w, max;
     getline(in, p3);
     // if(p3 != "P3"){
     //     cout << "incorrect file format" << endl;
     //     return;
     // }
     in.ignore(100, '\n');
-    in >> x; in >> y; in >> max;
-    cout << x << y <<max << endl;
-    int pixels[x][y*3];
-    for(int i = 0; i < x; i++){
-        for(int j = 0; j < y*3; j++){
+    in >> w; in >> h; in >> max;
+    cout << h << w <<max << endl;
+    int pixels[h][w*3];
+    for(int i = 0; i < h; i++){
+        for(int j = 0; j < w*3; j++){
             in >> pixels[i][j];
         }
     }
@@ -176,8 +177,8 @@ void readPPM(ifstream & in){
 
     cout << xmax << ymax << endl;
 
-    for(int xstep = 0; xstep < xmax; xstep++){
-        for(int ystep = 0; ystep < ymax; ystep++){
+    for(int ystep = ymax; ystep > 0; ystep--){
+        for(int xstep = 0; xstep < xmax; xstep++){
             cout << "hello" << endl;
             float alpha = distance(xstep, ystep, 100, 100, 25, 90) / distance(61, 10, 100, 100, 25, 90); //distance from xstep,ystep to CB
             float beta = distance(xstep, ystep, 61, 10, 25, 90) / distance(100, 100, 61, 10, 25, 90); //distance from xstep,ystep to AC
@@ -192,12 +193,12 @@ void readPPM(ifstream & in){
             float b1 = (0.160268 * alpha) + (0.083611 * beta) + (0.230169 * gamma);
             float b2 = (0.290086 * alpha) + (0.159907 * beta) + (0.222781 * gamma);
 
-            int texelx = x * b1;
-            int texely = y * b2;
+            int texely = h * b1;
+            int texelx = w * b2;
 
-            int R = pixels[texelx][texely*3];
-            int G = pixels[texelx][texely*3+1];
-            int B = pixels[texelx][texely*3+2];
+            int R = pixels[texely][(texelx*3)];
+            int G = pixels[texely][(texelx*3+1)];
+            int B = pixels[texely][(texelx*3+2)];
 
             image << R << " " << G << " " << B << " " ;
         }
@@ -211,15 +212,20 @@ int main(int argc, char ** argv){
         cout << "please provide output file name, xmax and ymax" << endl;
         return -1;
     }
-    // ofstream image(argv[1]);
-    // image << "P3" << endl;
-    // image << "#" << endl;
-    // image << argv[2] << " " << argv[3] << endl;
-    // image << "255" << endl;
-    // fullcolour(image, stoi(argv[2]), stoi(argv[3]));
-    ifstream in(argv[1]);
-    readPPM(in);
-    //image.close();
-    in.close();
+    ofstream image(argv[1]);
+    image << "P3" << endl;
+    image << "#" << endl;
+    image << argv[2] << " " << argv[3] << endl;
+    image << "255" << endl;
+    
+    //fullcolour(image, stoi(argv[2]), stoi(argv[3]));
+    //halfplanetest(image, stoi(argv[2]), stoi(argv[3]));
+    baryinterp(image, stoi(argv[2]), stoi(argv[3]));
+
+    //ifstream in(argv[1]);
+    //readPPM(in);
+    image.close();
+    //in.close();
+    
     return 0;
 }
