@@ -160,7 +160,7 @@ void readPPM(ifstream & in){
     in >> w; in >> h; in >> max;
     cout << h << w <<max << endl;
     int pixels[h][w*3];
-    for(int i = 0; i < h; i++){
+    for(int i = h-1; i >= 0; i--){
         for(int j = 0; j < w*3; j++){
             in >> pixels[i][j];
         }
@@ -190,11 +190,11 @@ void readPPM(ifstream & in){
             }
             cout << alpha << " " << beta << " " << gamma << endl;
 
-            float b1 = (0.160268 * alpha) + (0.083611 * beta) + (0.230169 * gamma);
-            float b2 = (0.290086 * alpha) + (0.159907 * beta) + (0.222781 * gamma);
+            float uweight = (0.160268 * alpha) + (0.083611 * beta) + (0.230169 * gamma);
+            float vweight = ((0.290086) * alpha) + ((0.159907) * beta) + ((0.222781) * gamma);
 
-            int texely = h * b1;
-            int texelx = w * b2;
+            int texelx = w * uweight;
+            int texely = h - (h * vweight);
 
             int R = pixels[texely][(texelx*3)];
             int G = pixels[texely][(texelx*3+1)];
@@ -212,20 +212,20 @@ int main(int argc, char ** argv){
         cout << "please provide output file name, xmax and ymax" << endl;
         return -1;
     }
-    ofstream image(argv[1]);
-    image << "P3" << endl;
-    image << "#" << endl;
-    image << argv[2] << " " << argv[3] << endl;
-    image << "255" << endl;
+    //ofstream image(argv[1]);
+    // image << "P3" << endl;
+    // image << "#" << endl;
+    // image << argv[2] << " " << argv[3] << endl;
+    // image << "255" << endl;
     
     //fullcolour(image, stoi(argv[2]), stoi(argv[3]));
     //halfplanetest(image, stoi(argv[2]), stoi(argv[3]));
-    baryinterp(image, stoi(argv[2]), stoi(argv[3]));
+    //baryinterp(image, stoi(argv[2]), stoi(argv[3]));
 
-    //ifstream in(argv[1]);
-    //readPPM(in);
-    image.close();
-    //in.close();
+    ifstream in(argv[1]);
+    readPPM(in);
+    //image.close();
+    in.close();
     
     return 0;
 }
