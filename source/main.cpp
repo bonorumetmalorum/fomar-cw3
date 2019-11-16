@@ -3,6 +3,7 @@
 #include <fstream>
 #include <istream>
 #include <vector>
+#include <iomanip>
 
 using namespace std;
 
@@ -31,7 +32,7 @@ float distance(float pointx, float pointy, float edgepoint1x, float edgepoint1y,
 
 void baryinterp(ofstream &image, float xmax, float ymax)
 {
-    for (int ystep = ymax; ystep > 0; ystep--)
+    for (int ystep = ymax-1; ystep >= 0; ystep--)
     {
         for (int xstep = 0; xstep < xmax; xstep++)
         {
@@ -59,7 +60,7 @@ void baryinterp(ofstream &image, float xmax, float ymax)
 
 void halfplanetest(ofstream &image, float xmax, float ymax)
 {
-    for (int ystep = ymax; ystep > 0; ystep--)
+    for (int ystep = ymax-1; ystep >= 0; ystep--)
     {
         for (int xstep = 0; xstep < xmax; xstep++)
         {
@@ -99,7 +100,7 @@ void halfplanetest(ofstream &image, float xmax, float ymax)
 
 void blacktriangle(ofstream &image, float xmax, float ymax)
 {
-    for (int ystep = ymax; ystep > 0; ystep--)
+    for (int ystep = ymax-1; ystep >= 0; ystep--)
     {
         for (int xstep = 0; xstep < xmax; xstep++)
         {
@@ -139,7 +140,7 @@ void blacktriangle(ofstream &image, float xmax, float ymax)
 
 void fullcolour(ofstream &image, float xmax, float ymax)
 {
-    for (int ystep = ymax; ystep > 0; ystep--)
+    for (int ystep = ymax-1; ystep >= 0; ystep--)
     {
         for (int xstep = 0; xstep < ymax; xstep++)
         {
@@ -202,7 +203,7 @@ void readPPM(ifstream &in)
 
     cout << xmax << ymax << endl;
 
-    for (int ystep = ymax; ystep > 0; ystep--)
+    for (int ystep = ymax-1; ystep >= 0; ystep--)
     {
         for (int xstep = 0; xstep < xmax; xstep++)
         {
@@ -236,6 +237,26 @@ void readPPM(ifstream &in)
 
 void calculateCoordinatesOfMysteryLocation()
 {
+    
+    //find the texels for pixel coordinates 62, 65
+    float alpha = distance(62, 65, 100, 100, 25, 90) / distance(61, 10, 100, 100, 25, 90); //distance from xstep,ystep to CB
+    float beta = distance(62, 65, 61, 10, 25, 90) / distance(100, 100, 61, 10, 25, 90);    //distance from xstep,ystep to AC
+    float gamma = distance(62, 65, 100, 100, 61, 10) / distance(25, 90, 100, 100, 61, 10); //distance from xstep,ystep to BA
+    float uweight = (0.160268 * alpha) + (0.083611 * beta) + (0.230169 * gamma);
+    float vweight = ((0.290086) * alpha) + ((0.159907) * beta) + ((0.222781) * gamma);
+    //convert texels to lat and long
+    double x = 512 * uweight;
+    double y = 256 - (256 * (vweight));
+    double lat = ((x/512.0) - 0.5)*(2*M_PI);
+    double lon = ((y/256.0) - 0.5)*M_PI;
+    //convert radians to degrees
+    double deglat = lat*(180.0/M_PI);
+    double deglon = lon*(180.0/M_PI);
+    
+    cout << setprecision(6) << fixed << lat << " " << lon << endl;
+    cout << deglat << " " << deglon << endl;
+
+    //bingo- Canada place cruise ship terminal :)!
 }
 
 int main(int argc, char **argv)
@@ -245,20 +266,20 @@ int main(int argc, char **argv)
         cout << "please provide output file name, xmax and ymax" << endl;
         return -1;
     }
-    ofstream image(argv[1]);
-    image << "P3" << endl;
-    image << "#" << endl;
-    image << argv[2] << " " << argv[3] << endl;
-    image << "255" << endl;
+    // ofstream image(argv[1]);
+    // image << "P3" << endl;
+    // image << "#" << endl;
+    // image << argv[2] << " " << argv[3] << endl;
+    // image << "255" << endl;
 
     //fullcolour(image, stoi(argv[2]), stoi(argv[3]));
     //halfplanetest(image, stoi(argv[2]), stoi(argv[3]));
     //baryinterp(image, stoi(argv[2]), stoi(argv[3]));
-    blacktriangle(image, stoi(argv[2]), stoi(argv[3]));
-
+    //blacktriangle(image, stoi(argv[2]), stoi(argv[3]));
+    calculateCoordinatesOfMysteryLocation();
     //ifstream in(argv[1]);
     //readPPM(in);
-    image.close();
+    //image.close();
     //in.close();
 
     return 0;
