@@ -38,6 +38,9 @@ void setupImage(vector<vector<int>> & image, int width, int height){
 
 vector<vector<int>> readTexture(string path){
     ifstream in(path);
+    if(in.fail()){
+        throw "failed to read file";
+    }
     string p3;
     string comment;
     int h, w, max;
@@ -46,10 +49,8 @@ vector<vector<int>> readTexture(string path){
     in >> w;
     in >> h;
     in >> max;
-    cout << h << w << max << endl;
     vector<int> row(w*3, 129);
     vector<vector<int>> pixels(h, row);
-    cout << "reached" << endl;
     for (int i = h - 1; i >= 0; i--)
     {
         for (int j = 0; j < w; j++)
@@ -74,9 +75,6 @@ void textureTriangle(vector<vector<int>> & texture, vector<vector<int>> & imageB
             float gamma = distance(xstep, ystep, 100, 100, 61, 10) / distance(25, 90, 100, 100, 61, 10); //distance from xstep,ystep to BA
             if (alpha < 0.0 || beta < 0.0 || gamma < 0.0)
             {
-                // imageBuffer[ystep][xstep*3] = 0;
-                // imageBuffer[ystep][xstep*3+1] = 0;
-                // imageBuffer[ystep][xstep*3+2] = 0;
                 continue;
             }
 
@@ -114,8 +112,14 @@ int main(int argc, char ** argv){
     vector<int>row(128*3, 129);
     vector<vector<int>> imageBuffer(128, row);
     setupImage(imageBuffer, 128, 128);
-    vector<vector<int>> texture = readTexture(path);
-    textureTriangle(texture, imageBuffer, 128, 128, 512, 256);
-    outputImage(image, imageBuffer, 128, 128);
-    image.close();
+    try{
+        vector<vector<int>> texture = readTexture(path);
+        textureTriangle(texture, imageBuffer, 128, 128, 512, 256);
+        outputImage(image, imageBuffer, 128, 128);
+        image.close();
+    }catch(const char * e){
+        cout << e << endl;
+        image.close();
+        return 1;
+    }
 }
