@@ -24,19 +24,22 @@ float distance(float pointx, float pointy, float edgepoint1x, float edgepoint1y,
     return dotproduct / magnitudeNormal;
 };
 
-void setupImage(vector<vector<int>> & image, int width, int height){
-    for(int i = 0; i < height; i++){
-        for(int j = 0; j < width; j++){
-            image[i][j*3] = 255; 
-            image[i][j*3+1] = 255;
-            image[i][j*3+2] = 192;
+void setupImage(vector<vector<int>> &image, int width, int height)
+{
+    for (int i = 0; i < height; i++)
+    {
+        for (int j = 0; j < width; j++)
+        {
+            image[i][j * 3] = 255;
+            image[i][j * 3 + 1] = 255;
+            image[i][j * 3 + 2] = 192;
         }
     }
 }
 
-void halfplanetest(vector<vector<int>> & imageBuffer, int xmax, int ymax)
+void halfplanetest(vector<vector<int>> &imageBuffer, int xmax, int ymax)
 {
-    for (int ystep = ymax-1; ystep >= 0; ystep--)
+    for (int ystep = ymax - 1; ystep >= 0; ystep--)
     {
         for (int xstep = 0; xstep < xmax; xstep++)
         {
@@ -46,50 +49,54 @@ void halfplanetest(vector<vector<int>> & imageBuffer, int xmax, int ymax)
             if (alpha < 0)
             {
                 //R
-                imageBuffer[ystep][xstep*3] = 255;
+                imageBuffer[ystep][xstep * 3] = 255;
             }
             if (alpha >= 0)
             {
-                imageBuffer[ystep][xstep*3] = 0;
+                imageBuffer[ystep][xstep * 3] = 0;
             }
             if (beta < 0)
             {
                 //G
-                imageBuffer[ystep][xstep*3+1] = 255;
+                imageBuffer[ystep][xstep * 3 + 1] = 255;
             }
             if (beta >= 0)
             {
-                imageBuffer[ystep][xstep*3+1] = 0;
+                imageBuffer[ystep][xstep * 3 + 1] = 0;
             }
             if (gamma < 0)
             {
                 //B
-                imageBuffer[ystep][xstep*3+2] = 255;
+                imageBuffer[ystep][xstep * 3 + 2] = 255;
             }
             if (gamma >= 0)
             {
-                imageBuffer[ystep][xstep*3+2] = 0;
+                imageBuffer[ystep][xstep * 3 + 2] = 0;
             }
         }
     }
 }
 
-void outputImage(ofstream & image, vector<vector<int>> & imageBuffer, int width, int height){
+void outputImage(ofstream &image, vector<vector<int>> &imageBuffer, int width, int height)
+{
     image << "P3" << endl;
     image << "#" << endl;
     image << "128 128" << endl;
     image << "255" << endl;
-    for(int ystep = height-1; ystep >= 0; ystep--){
-        for(int xstep = 0; xstep < width; xstep++){
-            image << imageBuffer[ystep][xstep*3] << " " << imageBuffer[ystep][xstep*3+1] << " " << imageBuffer[ystep][xstep*3+2] << " ";
+    for (int ystep = height - 1; ystep >= 0; ystep--)
+    {
+        for (int xstep = 0; xstep < width; xstep++)
+        {
+            image << imageBuffer[ystep][xstep * 3] << " " << imageBuffer[ystep][xstep * 3 + 1] << " " << imageBuffer[ystep][xstep * 3 + 2] << " ";
         }
         image << endl;
     }
 }
 
-int main(int argc, char ** argv){
+int main(int argc, char **argv)
+{
     ofstream image("./out/triangle.ppm");
-    vector<int> row(128*3, 129);
+    vector<int> row(128 * 3, 129);
     vector<vector<int>> imageBuffer(128, row);
     setupImage(imageBuffer, 128, 128);
     halfplanetest(imageBuffer, 128, 128);

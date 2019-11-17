@@ -26,19 +26,24 @@ float distance(float pointx, float pointy, float edgepoint1x, float edgepoint1y,
     return dotproduct / magnitudeNormal;
 }
 
-void setupImage(vector<vector<int>> & image, int width, int height){
-    for(int i = 0; i < height; i++){
-        for(int j = 0; j < width; j++){
-            image[i][j*3] = 255; 
-            image[i][j*3+1] = 255;
-            image[i][j*3+2] = 192;
+void setupImage(vector<vector<int>> &image, int width, int height)
+{
+    for (int i = 0; i < height; i++)
+    {
+        for (int j = 0; j < width; j++)
+        {
+            image[i][j * 3] = 255;
+            image[i][j * 3 + 1] = 255;
+            image[i][j * 3 + 2] = 192;
         }
     }
 }
 
-vector<vector<int>> readTexture(string path){
+vector<vector<int>> readTexture(string path)
+{
     ifstream in(path);
-    if(in.fail()){
+    if (in.fail())
+    {
         throw "failed to read file";
     }
     string p3;
@@ -49,24 +54,24 @@ vector<vector<int>> readTexture(string path){
     in >> w;
     in >> h;
     in >> max;
-    vector<int> row(w*3, 129);
+    vector<int> row(w * 3, 129);
     vector<vector<int>> pixels(h, row);
     for (int i = h - 1; i >= 0; i--)
     {
         for (int j = 0; j < w; j++)
         {
-            in >> pixels[i][j*3];
-            in >> pixels[i][j*3+1];
-            in >> pixels[i][j*3+2];
+            in >> pixels[i][j * 3];
+            in >> pixels[i][j * 3 + 1];
+            in >> pixels[i][j * 3 + 2];
         }
     }
     in.close();
     return pixels;
 };
 
-void textureTriangle(vector<vector<int>> & texture, vector<vector<int>> & imageBuffer, int width, int height, int textureWidth, int textureHeight)
+void textureTriangle(vector<vector<int>> &texture, vector<vector<int>> &imageBuffer, int width, int height, int textureWidth, int textureHeight)
 {
-    for (int ystep = height-1; ystep >= 0; ystep--)
+    for (int ystep = height - 1; ystep >= 0; ystep--)
     {
         for (int xstep = 0; xstep < width; xstep++)
         {
@@ -84,40 +89,47 @@ void textureTriangle(vector<vector<int>> & texture, vector<vector<int>> & imageB
             int texelx = textureWidth * uweight;
             int texely = textureHeight - (textureHeight * vweight);
 
-            imageBuffer[ystep][xstep*3] = texture[texely][(texelx * 3)];
-            imageBuffer[ystep][xstep*3+1] = texture[texely][(texelx * 3 + 1)];
-            imageBuffer[ystep][xstep*3+2] = texture[texely][(texelx * 3 + 2)];
+            imageBuffer[ystep][xstep * 3] = texture[texely][(texelx * 3)];
+            imageBuffer[ystep][xstep * 3 + 1] = texture[texely][(texelx * 3 + 1)];
+            imageBuffer[ystep][xstep * 3 + 2] = texture[texely][(texelx * 3 + 2)];
         }
     }
 }
 
-void outputImage(ofstream & image, vector<vector<int>> & imageBuffer, int width, int height){
+void outputImage(ofstream &image, vector<vector<int>> &imageBuffer, int width, int height)
+{
     image << "P3" << endl;
     image << "#" << endl;
     image << "128 128" << endl;
     image << "255" << endl;
-    for(int ystep = height-1; ystep >= 0; ystep--){
-        for(int xstep = 0; xstep < width; xstep++){
-            image << imageBuffer[ystep][xstep*3] << " " << imageBuffer[ystep][xstep*3+1] << " " << imageBuffer[ystep][xstep*3+2] << " ";
+    for (int ystep = height - 1; ystep >= 0; ystep--)
+    {
+        for (int xstep = 0; xstep < width; xstep++)
+        {
+            image << imageBuffer[ystep][xstep * 3] << " " << imageBuffer[ystep][xstep * 3 + 1] << " " << imageBuffer[ystep][xstep * 3 + 2] << " ";
         }
         image << endl;
     }
 }
 
-int main(int argc, char ** argv){
+int main(int argc, char **argv)
+{
     cout << "input path to texture" << endl;
     string path;
     cin >> path;
     ofstream image("./out/texture.ppm");
-    vector<int>row(128*3, 129);
+    vector<int> row(128 * 3, 129);
     vector<vector<int>> imageBuffer(128, row);
     setupImage(imageBuffer, 128, 128);
-    try{
+    try
+    {
         vector<vector<int>> texture = readTexture(path);
         textureTriangle(texture, imageBuffer, 128, 128, 512, 256);
         outputImage(image, imageBuffer, 128, 128);
         image.close();
-    }catch(const char * e){
+    }
+    catch (const char *e)
+    {
         cout << e << endl;
         image.close();
         return 1;

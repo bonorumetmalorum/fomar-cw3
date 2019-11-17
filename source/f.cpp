@@ -4,7 +4,6 @@
 
 using namespace std;
 
-
 float distance(float pointx, float pointy, float edgepoint1x, float edgepoint1y, float edgepoint2x, float edgepoint2y)
 {
     //point in relation to one end of line
@@ -35,17 +34,17 @@ void calculateCoordinatesOfMysteryLocation()
     //convert texels to lat and long
     double x = 512 * uweight;
     double y = 256 - (256 * (vweight));
-    double lat = ((x/512.0) - 0.5)*(2*M_PI);
-    double lon = ((y/256.0) - 0.5)*M_PI;
+    double lat = ((x / 512.0) - 0.5) * (2 * M_PI);
+    double lon = ((y / 256.0) - 0.5) * M_PI;
     //convert radians to degrees
-    double deglat = lat*(180.0/M_PI);
-    double deglon = lon*(180.0/M_PI);
-    
-    cout << setprecision(6) << fixed << "Question f) latitude: " << deglat << " longitude: " << deglon <<
-    " Canada place cruise ship terminal is the mystery location" << endl;
+    double deglat = lat * (180.0 / M_PI);
+    double deglon = lon * (180.0 / M_PI);
+
+    cout << setprecision(6) << fixed << "Question f) latitude: " << deglat << " longitude: " << deglon << " Canada place cruise ship terminal is the mystery location" << endl;
     //bingo- Canada place cruise ship terminal :)!
 }
 
-int main(int argc, char ** argv){
+int main(int argc, char **argv)
+{
     calculateCoordinatesOfMysteryLocation();
-} 
+}

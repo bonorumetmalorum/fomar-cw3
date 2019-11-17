@@ -30,9 +30,9 @@ void setupImage(vector<vector<int>> &image, int width, int height)
     {
         for (int j = 0; j < width; j++)
         {
-            image[i][j*3] = 255;
-            image[i][j*3 + 1] = 255;
-            image[i][j*3 + 2] = 192;
+            image[i][j * 3] = 255;
+            image[i][j * 3 + 1] = 255;
+            image[i][j * 3 + 2] = 192;
         }
     }
 }
@@ -57,21 +57,24 @@ void baryinterp(vector<vector<int>> &imageBuffer, float xmax, float ymax)
             int G = 255 * beta;
             int B = 255 * gamma;
 
-            imageBuffer[ystep][xstep*3] = R;
-            imageBuffer[ystep][xstep*3 + 1] = G;
-            imageBuffer[ystep][xstep*3 + 2] = B;
+            imageBuffer[ystep][xstep * 3] = R;
+            imageBuffer[ystep][xstep * 3 + 1] = G;
+            imageBuffer[ystep][xstep * 3 + 2] = B;
         }
     }
 };
 
-void outputImage(ofstream & image, vector<vector<int>> & imageBuffer, int width, int height){
+void outputImage(ofstream &image, vector<vector<int>> &imageBuffer, int width, int height)
+{
     image << "P3" << endl;
     image << "#" << endl;
     image << "128 128" << endl;
     image << "255" << endl;
-    for(int ystep = height-1; ystep >= 0; ystep--){
-        for(int xstep = 0; xstep < width; xstep++){
-            image << imageBuffer[ystep][xstep*3] << " " << imageBuffer[ystep][xstep*3+1] << " " << imageBuffer[ystep][xstep*3+2] << " ";
+    for (int ystep = height - 1; ystep >= 0; ystep--)
+    {
+        for (int xstep = 0; xstep < width; xstep++)
+        {
+            image << imageBuffer[ystep][xstep * 3] << " " << imageBuffer[ystep][xstep * 3 + 1] << " " << imageBuffer[ystep][xstep * 3 + 2] << " ";
         }
         image << endl;
     }
