@@ -34,11 +34,11 @@ void calculateCoordinatesOfMysteryLocation()
     //convert texels to lat and long
     double x = 512 * uweight;
     double y = 256 - (256 * (vweight));
-    double lat = ((x / 512.0) - 0.5) * (2 * M_PI);
-    double lon = ((y / 256.0) - 0.5) * M_PI;
+    double lon = ((x / 512.0) - 0.5) * (2 * M_PI);
+    double lat = ((y / 256.0) - 0.5) * M_PI;
     //convert radians to degrees
-    double deglat = lat * (180.0 / M_PI);
     double deglon = lon * (180.0 / M_PI);
+    double deglat = lat * (180.0 / M_PI);
 
     cout << setprecision(6) << fixed << "Question f) latitude: " << deglat << " longitude: " << deglon << " Canada place cruise ship terminal is the mystery location" << endl;
     //bingo- Canada place cruise ship terminal :)!
